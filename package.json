@@ -1,0 +1,12 @@
+{
+  "name": "jsonresume-theme-cards-print-flexbox",
+  "version": "1.0.0",
+  "description": "It is library that renders text cards as html for print",
+  "main": "index.js",
+  "repository": "https://github.com/vasileboris/jsonresume-theme-cards-print-flexbox",
+  "author": "Vasile Boris",
+  "license": "MIT",
+  "dependencies": {
+    "handlebars": "^4.7.6"
+  }
+}
