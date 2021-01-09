@@ -1,5 +1,6 @@
 const fs = require('fs'),
     path = require('path'),
+    { execSync } = require('child_process'),
     Handlebars = require('handlebars');
 
 function render(resume) {
@@ -68,7 +69,30 @@ const formatDate  = dateISO => {
     return months[date.getMonth()] +' ' + date.getFullYear();
 };
 
-const resumeJson = fs.readFileSync(__dirname + '/resume.json', 'utf-8');
-const resume = JSON.parse(resumeJson);
-let resumeHtml = render(resume);
-fs.writeFileSync(__dirname + '/resume.html', resumeHtml, 'utf-8');
+const isHeading = line => {
+    return !!line.match(/^<h[0-6].*>.*<\/h[0-6]>$/);
+}
+
+const pandocCmd = `pandoc cards.md -f markdown -t html -o cards-pandoc.html`;
+console.log(`Run => ${pandocCmd}`)
+execSync(pandocCmd);
+
+const cards = [];
+let card = null;
+const cardsPandocHtmlLines = fs.readFileSync('cards-pandoc.html', 'utf-8').split('\n');
+cardsPandocHtmlLines.forEach(line => {
+    if(isHeading(line)) {
+        if(card) {
+            cards.push(card);
+        }
+        card = {
+            content: [line.trim()]
+        }
+    } else if ('' !== line.trim()) {
+        card.content.push(line.trim());
+    }
+});
+if(card) {
+    cards.push(card);
+}
+fs.writeFileSync('cards-pandoc.json', JSON.stringify(cards, null, 2), 'utf-8');
