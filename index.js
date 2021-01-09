@@ -1,11 +1,11 @@
-const fs = require("fs"),
+const fs = require('fs'),
     path = require('path'),
-    Handlebars = require("handlebars");
+    Handlebars = require('handlebars');
 
 function render(resume) {
-    const normalizeCss = fs.readFileSync(__dirname + "/normalize.css", "utf-8"),
-        css = fs.readFileSync(__dirname + "/style.css", "utf-8"),
-        tpl = fs.readFileSync(__dirname + "/resume.hbs", "utf-8"),
+    const normalizeCss = fs.readFileSync(__dirname + '/normalize.css', 'utf-8'),
+        css = fs.readFileSync(__dirname + '/style.css', 'utf-8'),
+        tpl = fs.readFileSync(__dirname + '/resume.hbs', 'utf-8'),
         partialsDir = path.join(__dirname, 'partials'),
         filenames = fs.readdirSync(partialsDir);
 
@@ -65,9 +65,10 @@ const formatPeriod = (startDate, endDate) => {
 const formatDate  = dateISO => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const date = new Date(dateISO);
-    return months[date.getMonth()] +" " + date.getFullYear();
+    return months[date.getMonth()] +' ' + date.getFullYear();
 };
 
-module.exports = {
-    render: render
-};
+const resumeJson = fs.readFileSync(__dirname + '/resume.json', 'utf-8');
+const resume = JSON.parse(resumeJson);
+let resumeHtml = render(resume);
+fs.writeFileSync(__dirname + '/resume.html', resumeHtml, 'utf-8');
