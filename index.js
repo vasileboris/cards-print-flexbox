@@ -80,18 +80,21 @@ execSync(pandocCmd);
 const cards = [];
 let card = null;
 const cardsPandocHtmlLines = fs.readFileSync('cards-pandoc.html', 'utf-8').split('\n');
-cardsPandocHtmlLines.forEach(line => {
-    if(isHeading(line)) {
-        if(card) {
-            cards.push(card);
+cardsPandocHtmlLines
+    .map(line => line.trim())
+    .filter(line => '' !== line)
+    .forEach(line => {
+        if(isHeading(line)) {
+            if(card) {
+                cards.push(card);
+            }
+            card = {
+                content: [line]
+            }
+        } else {
+            card.content.push(line);
         }
-        card = {
-            content: [line.trim()]
-        }
-    } else if ('' !== line.trim()) {
-        card.content.push(line.trim());
-    }
-});
+    });
 if(card) {
     cards.push(card);
 }
